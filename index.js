@@ -1,67 +1,28 @@
-const { Board, Button, Led } = require('johnny-five');
-
-// Set `lightOn` to true as a default since our LED will be on
-let lightOn = true;
-
-// Make a new Board Instance
+const { Board, Led, Sensor } = require('johnny-five');
 const board = new Board();
 
-// When the board is connected, turn on the LED connected to pin 9
 board.on('ready', function () {
-  console.log('[johnny-five]: Signing On...');
-
-  // Make a new Led object and connect it to pin 9
-  const led = new Led(9);
-
-  // Make a new Button object assigned to pin 7
-  // We also need to say it is a pullup resistor
-  var pushButton = new Button({
-    pin: 7,
-    isPullup: true,
+  const mic = new Sensor({
+    pin: 'A0',
+    freq: 100,
+    threshold: 10,
   });
+  const led = new Led(11);
+  // led.brightness(1);
+  led.off();
+  // Scale the sensor's value to the LED's brightness range
 
-  // Switch it on
-  led.on();
-
-  // If the button is pressed, toggle the LED on or off
-  pushButton.on('down', function () {
-    if (lightOn) {
-      led.off();
-      lightOn = false;
-    } else {
+  mic.scale([0, 1]).on('data', function () {
+    // set the led's brightness based on force
+    // applied to force sensitive resistor
+    console.log('[johnny-five]: Data from Sensor...');
+    console.log('this.value: ', this.value);
+    if (this.value < 0.35) {
+      console.log('Turn LED On...');
       led.on();
-      lightOn = true;
+    } else {
+      led.off();
+      console.log('Turn LED Off...');
     }
-  });
-
-  // REPL object so we can interact with our LED
-  this.repl.inject({
-    // Control the LED via calling for the object
-    led: led,
-    // switchOn and switchOff functions to turn LED on and off using REPL
-    switchOn: function () {
-      if (lightOn) {
-        console.log('[johnny-five]: LED is already on...');
-      } else {
-        console.log('[johnny-five]: Turning LED on...');
-        led.on();
-        lightOn = true;
-      }
-    },
-    switchOff: function () {
-      if (!lightOn) {
-        console.log('[johnny-five]: LED is already off...');
-      } else {
-        console.log('[johnny-five]: Turning LED off...');
-        led.stop().off();
-        lightOn = false;
-      }
-    },
-  });
-
-  // When the board is closing, stop any LED animations and turn it off
-  this.on('exit', function () {
-    led.stop().off();
-    console.log('[johnny-five]: Signing Off...');
   });
 });
