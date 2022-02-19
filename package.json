@@ -1,0 +1,22 @@
+{
+  "name": "arduino-johnny5",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dekefective/arduino-johnny5.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dekefective/arduino-johnny5/issues"
+  },
+  "homepage": "https://github.com/Dekefective/arduino-johnny5#readme",
+  "dependencies": {
+    "johnny-five": "^2.1.0"
+  }
+}
